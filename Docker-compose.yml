@@ -51,7 +51,7 @@ services:
     image: sync1
     build: ./example2/sync1/
     volumes:
-      - './example2:/app'
+      - './example2/sync1:/app'
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
     ports:
@@ -66,7 +66,7 @@ services:
     image: sync2
     build: ./example2/sync2/
     volumes:
-      - './example2:/app'
+      - './example2/sync2:/app'
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
     depends_on:
@@ -79,7 +79,7 @@ services:
     image: sync3
     build: ./example2/sync3/
     volumes:
-      - './example2:/app'
+      - './example2/sync3:/app'
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
     depends_on:
@@ -99,10 +99,10 @@ services:
     image: async1
     build: ./example3/async1/
     volumes:
-      - './example3:/app'
+      - './example3/async1:/app'
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
-      - REDIS_HOST=redis://redis_server:6379
+      - REDIS_HOST=redis://redis_server:6379/0
     ports:
       - "8082:5000"
     depends_on:
@@ -117,7 +117,7 @@ services:
     image: async2
     build: ./example3/async2/
     volumes:
-      - './example3:/app'
+      - './example3/async2:/app'
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
     depends_on:
@@ -130,10 +130,10 @@ services:
     image: async3
     build: ./example3/async3/
     volumes:
-      - './example3:/app'
+      - './example3/async3:/app'
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
-      - REDIS_HOST=redis://redis_server:6379
+      - REDIS_HOST=redis://redis_server:6379/0
     depends_on:
       - queue
       - redis_server

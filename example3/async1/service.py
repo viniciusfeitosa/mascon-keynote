@@ -10,7 +10,7 @@ class ApiService:
 
     name = 'ex3.api'
     dispatch = EventDispatcher()
-    redis = Redis('conn')
+    redis = Redis('conn', encoding='utf-8')
 
     @http('GET', '/async/<int:id>')
     def get(self, request, id):
@@ -18,9 +18,10 @@ class ApiService:
         try:
             self.dispatch('ex3.domain1.task', id)
             localtion = {
-                'Location': 'http://localhost/async/{}/data'.format(id)
-            } + content_type
-            return 202, localtion, json.dumps({'status': 'ACCEPTED'})
+                'Location': 'http://localhost:8082/async/{}/data'.format(id)
+            }
+            header = {**localtion, **content_type}
+            return 202, header, json.dumps({'status': 'ACCEPTED'})
         except Exception as e:
             return 500, content_type,  json.dumps({'error': e})
 
@@ -40,9 +41,9 @@ class Domain1:
 
     @event_handler('ex3.api', 'ex3.domain1.task')
     def task(self, id):
-        data = {'id', id}
+        data = {'id': id}
         if id == 1:
             data['first_name'] = 'Vinicius'
         else:
-            data['first_name'] = 'josé'
+            data['first_name'] = 'Juan'
         self.dispatch('ex3.domain2.task', data)

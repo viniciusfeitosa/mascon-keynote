@@ -8,7 +8,7 @@ class Domain2:
 
     @event_handler('ex3.domain1', 'ex3.domain2.task')
     def task(self, data):
-        if id == 1:
+        if data['id'] == 1:
             data['last_name'] = 'Pacheco'
         else:
             data['last_name'] = 'Nadie'
