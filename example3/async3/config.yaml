@@ -1,13 +1,10 @@
 AMQP_URI: ${QUEUE_HOST}
 
-REDIS_URIS:
-    conn: ${REDIS_HOST}
-
 LOGGING:
-    version: 1
-    handlers:
-        console:
-            class: logging.StreamHandler
-    root:
-        level: DEBUG
-        handlers: [console]
+  version: 1
+  handlers:
+    console:
+      class: logging.StreamHandler
+  root:
+    level: DEBUG
+    handlers: [console]

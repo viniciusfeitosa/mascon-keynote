@@ -1,18 +1,20 @@
 import json
+import os
 
 from ast import literal_eval
 
 from nameko.events import EventDispatcher
 from nameko.web.handlers import http
 from nameko.events import event_handler
-from nameko_redis import Redis
+from redis import Redis
+
+redis = Redis(host=os.environ.get('REDIS_HOST'), port=6379, db=0)
 
 
 class ApiService:
 
     name = 'ex3_api'
     dispatch = EventDispatcher()
-    redis = Redis('conn', encoding='utf-8')
 
     @http('GET', '/async/<int:id>')
     def get(self, request, id):
@@ -32,7 +34,7 @@ class ApiService:
         content_type = {'Content-Type': 'application/json'}
         try:
             uid = 'ex3_{}'.format(id)
-            response = self.redis.get(uid)
+            response = redis.get(uid).decode('utf-8')
             return 200, content_type, json.dumps(literal_eval(response))
         except Exception as e:
             return 202, content_type,  json.dumps({'status': 'PENDING'})
