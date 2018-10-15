@@ -1,0 +1,143 @@
+version: '3'
+
+services:
+
+  queue:
+    image: rabbitmq
+    build: ./queue
+    ports:
+        - "15673:15672"
+        - "5673:5672"
+    restart: always
+
+  redis_server:
+    image: redis
+    ports:
+     - "6379:6379"
+    healthcheck:
+      test: exit 0
+    restart: always
+
+
+# -----------------------------
+# -----------------------------
+# --------- The Rock ----------
+# -----------------------------
+# -----------------------------
+
+  the_rock:
+    image: the_rock
+    build: ./example1/
+    volumes:
+      - './example1:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+    ports:
+      - "8080:5000"
+    depends_on:
+      - queue
+    links:
+      - queue
+    restart: always
+
+
+# -----------------------------
+# -----------------------------
+# ------- Sync Servers --------
+# -----------------------------
+# -----------------------------
+
+  sync1:
+    image: sync1
+    build: ./example2/sync1/
+    volumes:
+      - './example2:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+    ports:
+      - "8081:5000"
+    depends_on:
+      - queue
+    links:
+      - queue
+    restart: always
+
+  sync2:
+    image: sync2
+    build: ./example2/sync2/
+    volumes:
+      - './example2:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+    depends_on:
+      - queue
+    links:
+      - queue
+    restart: always
+
+  sync3:
+    image: sync3
+    build: ./example2/sync3/
+    volumes:
+      - './example2:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+    depends_on:
+      - queue
+    links:
+      - queue
+    restart: always
+
+
+# -----------------------------
+# -----------------------------
+# ------- Async Servers -------
+# -----------------------------
+# -----------------------------
+
+  async1:
+    image: async1
+    build: ./example3/async1/
+    volumes:
+      - './example3:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+      - REDIS_HOST=redis://redis_server:6379
+    ports:
+      - "8082:5000"
+    depends_on:
+      - queue
+      - redis_server
+    links:
+      - queue
+      - redis_server
+    restart: always
+
+  async2:
+    image: async2
+    build: ./example3/async2/
+    volumes:
+      - './example3:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+    depends_on:
+      - queue
+    links:
+      - queue
+    restart: always
+
+  async3:
+    image: async3
+    build: ./example3/async3/
+    volumes:
+      - './example3:/app'
+    environment:
+      - QUEUE_HOST=amqp://guest:guest@queue
+      - REDIS_HOST=redis://redis_server:6379
+    depends_on:
+      - queue
+      - redis_server
+    links:
+      - queue
+      - redis_server
+    restart: always

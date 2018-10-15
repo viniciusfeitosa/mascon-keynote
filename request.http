@@ -1,0 +1,11 @@
+###
+
+GET http://localhost/8080/therock/1 HTTP/1.1
+
+###
+
+GET http://localhost/8081/sync/1 HTTP/1.1
+
+###
+
+GET http://localhost/8082/async/1 HTTP/1.1
