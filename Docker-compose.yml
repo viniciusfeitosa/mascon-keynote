@@ -30,15 +30,12 @@ services:
       - "./example1:/app"
     environment:
       - QUEUE_HOST=amqp://guest:guest@queue
-      - REDIS_HOST=redis_server
     ports:
       - "8080:5000"
     depends_on:
       - queue
-      - redis_server
     links:
       - queue
-      - redis_server
     restart: always
 
   # -----------------------------
