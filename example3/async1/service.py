@@ -1,5 +1,7 @@
 import json
 
+from ast import literal_eval
+
 from nameko.events import EventDispatcher
 from nameko.web.handlers import http
 from nameko.events import event_handler
@@ -8,7 +10,7 @@ from nameko_redis import Redis
 
 class ApiService:
 
-    name = 'ex3.api'
+    name = 'ex3_api'
     dispatch = EventDispatcher()
     redis = Redis('conn', encoding='utf-8')
 
@@ -16,7 +18,7 @@ class ApiService:
     def get(self, request, id):
         content_type = {'Content-Type': 'application/json'}
         try:
-            self.dispatch('ex3.domain1.task', id)
+            self.dispatch('ex3_domain1.task', id)
             localtion = {
                 'Location': 'http://localhost:8082/async/{}/data'.format(id)
             }
@@ -29,21 +31,22 @@ class ApiService:
     def get_data(self, request, id):
         content_type = {'Content-Type': 'application/json'}
         try:
-            response = self.redis.get(id)
-            return 200, content_type, json.dumps(response)
+            uid = 'ex3_{}'.format(id)
+            response = self.redis.get(uid)
+            return 200, content_type, json.dumps(literal_eval(response))
         except Exception as e:
             return 202, content_type,  json.dumps({'status': 'PENDING'})
 
 
 class Domain1:
-    name = 'ex3.domain1'
+    name = 'ex3_domain1'
     dispatch = EventDispatcher()
 
-    @event_handler('ex3.api', 'ex3.domain1.task')
+    @event_handler('ex3_api', 'ex3_domain1.task')
     def task(self, id):
         data = {'id': id}
         if id == 1:
             data['first_name'] = 'Vinicius'
         else:
             data['first_name'] = 'Juan'
-        self.dispatch('ex3.domain2.task', data)
+        self.dispatch('ex3_domain2.task', data)

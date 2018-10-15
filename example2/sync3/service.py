@@ -4,7 +4,7 @@ from nameko.rpc import rpc
 
 
 class Domain3:
-    name = 'ex2.domain3'
+    name = 'ex2_domain3'
 
     @rpc
     def task(self, id):

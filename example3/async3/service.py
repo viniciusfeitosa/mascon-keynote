@@ -5,14 +5,15 @@ from nameko_redis import Redis
 
 
 class Domain3:
-    name = 'ex3.domain3'
+    name = 'ex3_domain3'
     redis = Redis('conn', encoding='utf-8')
 
-    @event_handler('ex3.domain2', 'ex3.domain3.task')
+    @event_handler('ex3_domain2', 'ex3_domain3.task')
     def task(self, data):
         sleep(0.01)
         if data['id'] == 1:
             data['twitter'] = '@viniciuspach'
         else:
             data['twitter'] = '@nose'
-        self.redis.set(data['id'], data)
+        uid = 'ex3_{}'.format(data['id'])
+        self.redis.set(uid, data)
