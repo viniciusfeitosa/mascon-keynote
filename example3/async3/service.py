@@ -1,4 +1,6 @@
+import logging
 import os
+import json
 
 from time import sleep
 
@@ -19,4 +21,8 @@ class Domain3:
         else:
             data['twitter'] = '@nose'
         uid = 'ex3_{}'.format(data['id'])
-        redis.set(uid, data)
+        logging.info('uid: {}'.format(uid))
+        try:
+            redis.set(uid, json.dumps(data))
+        except Exception as e:
+            logging.error(e)

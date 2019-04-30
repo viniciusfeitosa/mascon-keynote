@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 from ast import literal_eval
@@ -34,9 +35,12 @@ class ApiService:
         content_type = {'Content-Type': 'application/json'}
         try:
             uid = 'ex3_{}'.format(id)
+            logging.info('uid: {}'.format(uid))
             response = redis.get(uid).decode('utf-8')
+            logging.info(response)
             return 200, content_type, json.dumps(literal_eval(response))
         except Exception as e:
+            logging.error(e)
             return 202, content_type,  json.dumps({'status': 'PENDING'})
 
 
